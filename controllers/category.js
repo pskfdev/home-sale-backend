@@ -2,13 +2,13 @@ const prisma = require("../config/prisma");
 
 exports.createCategory = async (req, res) => {
   try {
-    const { name } = req.body
+    const { name } = req.body;
 
     const category = await prisma.category.create({
       data: {
-        name: name
-      }
-    })
+        name: name,
+      },
+    });
 
     res.status(200).json(category);
   } catch (err) {
@@ -19,7 +19,7 @@ exports.createCategory = async (req, res) => {
 
 exports.listCategory = async (req, res) => {
   try {
-    const categorys = await prisma.category.findMany()
+    const categorys = await prisma.category.findMany();
 
     res.status(200).json(categorys);
   } catch (err) {
@@ -28,15 +28,53 @@ exports.listCategory = async (req, res) => {
   }
 };
 
+exports.readCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const category = await prisma.category.findFirst({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    res.status(200).json(category);
+  } catch (err) {
+    console.log("Err", err);
+    res.status(500).json({ msg: "Server Error!" });
+  }
+};
+
+exports.updateCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+
+    const category = await prisma.category.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+        name: name,
+      },
+    });
+
+    res.status(200).json(category);
+  } catch (err) {
+    console.log("Err", err);
+    res.status(500).json({ msg: "Server Error!" });
+  }
+};
+
 exports.RemoveCategory = async (req, res) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
 
     const category = await prisma.category.delete({
       where: {
-        id: Number(id)
-      }
-    })
+        id: Number(id),
+      },
+    });
 
     res.status(200).json(category);
   } catch (err) {
