@@ -5,7 +5,8 @@ exports.createAssets = async (req, res) => {
     const {
       title,
       description,
-      price,
+      priceRent,
+      priceSale,
       location,
       categoryId,
       ownerName,
@@ -17,7 +18,8 @@ exports.createAssets = async (req, res) => {
       data: {
         title: title,
         description: description,
-        price: parseInt(price),
+        priceRent: parseInt(priceRent),
+        priceSale: parseInt(priceSale),
         location: location,
         categoryId: parseInt(categoryId),
         ownerName: ownerName,
@@ -84,7 +86,8 @@ exports.updateAssets = async (req, res) => {
     const {
       title,
       description,
-      price,
+      priceRent,
+      priceSale,
       location,
       categoryId,
       ownerName,
@@ -106,7 +109,8 @@ exports.updateAssets = async (req, res) => {
       data: {
         title: title,
         description: description,
-        price: parseInt(price),
+        priceRent: parseInt(priceRent),
+        priceSale: parseInt(priceSale),
         location: location,
         categoryId: parseInt(categoryId),
         ownerName: ownerName,

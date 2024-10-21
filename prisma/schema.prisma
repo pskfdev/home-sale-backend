@@ -25,19 +25,20 @@ model User {
 }
 
 model Assets {
-  id           Int                @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   title        String
   description  String
-  price        Int
+  priceRent    Int?
+  priceSale    Int?
   location     String
-  category     Category          @relation(fields: [categoryId], references: [id])
+  category     Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId   Int
   ownerName    String
   ownerContact String
   images       Image[]
-  wishlists    AssetsOnWishlist[]
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
+  wishlists    Wishlist[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 model Image {
@@ -61,18 +62,11 @@ model Category {
 }
 
 model Wishlist {
-  id        Int                @id @default(autoincrement())
-  assets    AssetsOnWishlist[]
-  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        Int      @id @default(autoincrement())
+  assets    Assets   @relation(fields: [assetsId], references: [id], onDelete: Cascade)
+  assetsId  Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
-}
-
-model AssetsOnWishlist {
-  id         Int      @id @default(autoincrement())
-  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
-  wishlistId Int
-  assets     Assets   @relation(fields: [assetsId], references: [id], onDelete: Cascade)
-  assetsId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
