@@ -63,14 +63,20 @@ exports.removeWishlist = async (req, res) => {
     });
 
     if (!wishlists) {
-      return res.status(400).json({ msg: "No wishlist!" });
+      return res.status(400).json({ msg: "Empty wishlist!" });
+    }
+
+    //ค้นหารายการ wishlist ที่ต้องการลบโดยใช้ wishlistId
+    const filterWishlist = wishlists.filter((item) => item.id == wishlistId)
+    if (!filterWishlist) {
+      return res.status(400).json({ msg: "ID wishlist not found!" });
     }
 
 
-    //ลบข้อมูลเก่าใน DB wishlist
+    //เอาข้อมูลที่ filter ได้มาลบใน wishlist DB 
     const wishlist = await prisma.wishlist.delete({
       where: {
-        id: parseInt(wishlistId),
+        id: parseInt(filterWishlist[0].id),
       },
     });
 

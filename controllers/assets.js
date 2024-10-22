@@ -1,4 +1,13 @@
 const prisma = require("../config/prisma");
+const cloudinary = require("cloudinary").v2;
+
+
+// Configuration Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 exports.createAssets = async (req, res) => {
   try {
@@ -137,15 +146,82 @@ exports.removeAssets = async (req, res) => {
   try {
     const { id } = req.params;
 
-    /* จัดการลบรูปด้วย */
+    //ค้นหา assets ด้วย id จาก params
+    const assets = await prisma.assets.findFirst({
+      where: {
+        id: parseInt(id)
+      },
+      include: {
+        images: true
+      }
+    })
 
-    const assets = await prisma.assets.delete({
+    //Check empty assets
+    if (!assets) {
+      return res.status(400).json({ msg: "Assets not found!" });
+    }
+
+    //เข้าถึง images[]ที่ได้จาก assets
+    //แล้วทำการ map() ให้เป็น new Promise((resolve, reject) => cloudinary.uploader.destroy(item.public_id (x,i)=> )
+    //คือการวนลูป เพื่อเรียกใช้ new Promise() เพื่อลบรูปภาพบน Cloudinary แบบรอกันทีละรูปภาพ
+    const assetsImage = assets.images.map((item) => new Promise((resolve, reject) => {
+      cloudinary.uploader.destroy(item.public_id, (error, result) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(result)
+        }
+      })
+    }))
+
+    //ใช้งาน Promise.all() เพื่อให้ทำงานแบบรมกันทั้งหมด
+    await Promise.all(assetsImage)
+    
+
+    //ลบข้อมูลใน DB Assets
+    const result = await prisma.assets.delete({
       where: {
         id: parseInt(id),
       },
     });
 
-    res.status(200).json(assets);
+    res.status(200).json(result);
+  } catch (err) {
+    console.log("Err", err);
+    res.status(500).json({ msg: "Server Error!" });
+  }
+};
+
+
+//Controller Image
+exports.createImage = async (req, res) => {
+  try {
+    const { image } = req.body;
+
+    //Upload Image to cloudinary
+    const result = await cloudinary.uploader.upload(image, {
+      public_id: `Image-${Date.now()}`,
+      resource_type: "auto",
+      folder: "home-sale",
+    });
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.log("Err", err);
+    res.status(500).json({ msg: "Server Error!" });
+  }
+};
+
+exports.removeImage = async (req, res) => {
+  try {
+    //public_id
+    const { public_id } = req.params;
+
+    //Delete Image in cloudinary
+    cloudinary.uploader.destroy(public_id, (result) => {
+      res.status(200).json({ msg: "Remove image success" });
+    });
+
   } catch (err) {
     console.log("Err", err);
     res.status(500).json({ msg: "Server Error!" });
