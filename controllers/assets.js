@@ -20,8 +20,11 @@ exports.createAssets = async (req, res) => {
       categoryId,
       ownerName,
       ownerContact,
-      images,
+      image,
     } = req.body;
+
+    console.log(req.body);
+    
 
     const assets = await prisma.assets.create({
       data: {
@@ -34,7 +37,7 @@ exports.createAssets = async (req, res) => {
         ownerName: ownerName,
         ownerContact: ownerContact,
         images: {
-          create: images.map((item) => ({
+          create: image.map((item) => ({
             asset_id: item.asset_id,
             public_id: item.public_id,
             url: item.url,
@@ -215,7 +218,7 @@ exports.createImage = async (req, res) => {
 exports.removeImage = async (req, res) => {
   try {
     //public_id
-    const { public_id } = req.params;
+    const { public_id } = req.body;   
 
     //Delete Image in cloudinary
     cloudinary.uploader.destroy(public_id, (result) => {

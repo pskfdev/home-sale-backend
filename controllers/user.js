@@ -42,20 +42,18 @@ exports.readUser = async (req, res) => {
   }
 };
 
-exports.changePasswordUser = async (req, res) => {
+exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { newPassword } = req.body;
-
-    //Hash-Password
-    const hashPassword = await bcrypt.hash(newPassword, 10); //bcrypt.hash(req.body.password, salt)
+    const { name, role } = req.body;
 
     const user = await prisma.user.update({
       where: {
         id: parseInt(id),
       },
       data: {
-        password: hashPassword,
+        name: name,
+        role: role
       },
     });
 
@@ -75,6 +73,30 @@ exports.removeUser = async (req, res) => {
         id: Number(id)
       }
     })
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.log("Err", err);
+    res.status(500).json({ msg: "Server Error!" });
+  }
+};
+
+exports.changePasswordUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newPassword } = req.body;
+
+    //Hash-Password
+    const hashPassword = await bcrypt.hash(newPassword, 10); //bcrypt.hash(req.body.password, salt)
+
+    const user = await prisma.user.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+        password: hashPassword,
+      },
+    });
 
     res.status(200).json(user);
   } catch (err) {

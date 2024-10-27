@@ -13,7 +13,7 @@ router.delete('/assets/:id', removeAssets)
 
 //Router Image
 router.post('/image', createImage)
-router.delete('/image/:public_id', removeImage)
+router.post('/remove-image', removeImage)
 
 
 
