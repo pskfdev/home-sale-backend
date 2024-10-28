@@ -22,8 +22,6 @@ exports.createAssets = async (req, res) => {
       ownerContact,
       image,
     } = req.body;
-
-    console.log(req.body);
     
 
     const assets = await prisma.assets.create({
