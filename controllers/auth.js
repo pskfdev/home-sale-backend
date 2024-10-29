@@ -69,6 +69,7 @@ exports.login = async (req, res) => {
       id: user.id,
       email: user.email,
       role: user.role,
+      name: user.name
     };
     jwt.sign(
       payload,
@@ -91,7 +92,7 @@ exports.login = async (req, res) => {
 
 exports.currentUser = async (req, res) => {
   try {
-    res.send("Hello Current-user");
+    res.status(200).json(req.user);
   } catch (err) {
     console.log("Err", err);
     res.status(500).json({ msg: "Server Error!" });
@@ -100,7 +101,7 @@ exports.currentUser = async (req, res) => {
 
 exports.currentAdmin = async (req, res) => {
   try {
-    res.send("Hello Current-admin");
+    res.status(200).json(req.user);
   } catch (err) {
     console.log("Err", err);
     res.status(500).json({ msg: "Server Error!" });
