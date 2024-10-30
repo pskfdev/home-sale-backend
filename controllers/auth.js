@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, name } = req.body;
 
     //Check req.body.email & password
     if (!email || !password) {
@@ -29,6 +29,7 @@ exports.register = async (req, res) => {
       data: {
         email: email,
         password: hashPassword,
+        name: name
       },
     });
 
