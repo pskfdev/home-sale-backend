@@ -19,6 +19,13 @@
 * jsonwebtoken (JWT)
 * cloudinary
 
+## deploy
+
+* Backend : `Render`
+* Database : `Supabase` `(เปลี่ยนฐานข้อมูลเป็น postgresql)`
+* Image : `Cloudinary`
+
+
 ## website & template
 
 > [Website เสือ-เอเจ้น](https://tiger-agent.netlify.app/)
